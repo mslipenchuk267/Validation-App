@@ -23,6 +23,14 @@ class AudioDetector(private val textToSpeech: TextToSpeech) {
     private var stopDetectionRunnable: Runnable? = null
     private var silenceStartTime: Long = 0
 
+    // List of phrases to choose from
+    private val phrases = listOf(
+        "You're so right",
+        "Correct, go on",
+        "Wow! no way",
+        "They sound like an asshole"
+    )
+
     fun startDetection(threshold: Int, callback: (Boolean) -> Unit) {
         val buffer = ShortArray(BUFFER_SIZE)
         audioRecord.startRecording()
@@ -58,7 +66,8 @@ class AudioDetector(private val textToSpeech: TextToSpeech) {
                         isThresholdMet = false
                         handler.post {
                             callback(false)
-                            textToSpeech.speak("You're so right", TextToSpeech.QUEUE_FLUSH, null, null)
+                            val randomPhrase = phrases.random()
+                            textToSpeech.speak(randomPhrase, TextToSpeech.QUEUE_FLUSH, null, null)
                         }
                     }
                 }

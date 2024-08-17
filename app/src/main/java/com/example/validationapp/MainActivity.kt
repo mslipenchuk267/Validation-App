@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             textToSpeech.language = Locale.US
+            textToSpeech.setSpeechRate(0.75f)  // Normal speech rate
         }
     }
 
@@ -104,7 +105,7 @@ fun NoiseDetectionSurface(audioDetector: AudioDetector?, modifier: Modifier = Mo
             .fillMaxSize()
             .background(if (isAboveThreshold) Color.Green else Color.Red),
         contentAlignment = Alignment.Center) {
-
+        
     }
 }
 
