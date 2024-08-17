@@ -31,7 +31,7 @@ import java.util.Locale
 
 class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
-    private lateinit var audioDetector: AudioDetector
+    private var audioDetector: AudioDetector? = null
     private lateinit var textToSpeech: TextToSpeech
 
 
@@ -71,7 +71,11 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        audioDetector.stopDetection()
+        audioDetector?.stopDetection()
+
+        // Shutdown TextToSpeech when done
+        textToSpeech.stop()
+        textToSpeech.shutdown()
     }
 }
 
