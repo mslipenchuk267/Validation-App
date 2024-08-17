@@ -6,9 +6,10 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Handler
 import android.os.Looper
+import android.speech.tts.TextToSpeech
 import kotlin.math.abs
 
-class AudioDetector {
+class AudioDetector(private val textToSpeech: TextToSpeech) {
 
     private val SAMPLE_RATE = 44100
     private val BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLE_RATE,
@@ -55,7 +56,10 @@ class AudioDetector {
                     // If 2 seconds have passed in silence, trigger callback
                     if (System.currentTimeMillis() - silenceStartTime >= 3000  && isThresholdMet) {
                         isThresholdMet = false
-                        callback(false)
+                        handler.post {
+                            callback(false)
+                            textToSpeech.speak("You're so right", TextToSpeech.QUEUE_FLUSH, null, null)
+                        }
                     }
                 }
             }

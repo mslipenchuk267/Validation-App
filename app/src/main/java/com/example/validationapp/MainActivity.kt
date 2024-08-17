@@ -1,7 +1,7 @@
 package com.example.validationapp
 
-import android.content.pm.PackageManager
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -12,12 +12,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,16 +27,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import com.example.validationapp.ui.theme.ValidationAppTheme
 import kotlinx.coroutines.delay
+import java.util.Locale
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var audioDetector: AudioDetector
+    private lateinit var textToSpeech: TextToSpeech
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        audioDetector = AudioDetector()
+        // Init text to speech
+        textToSpeech = TextToSpeech(this, this)
 
         enableEdgeToEdge()
         setContent {
@@ -48,7 +51,7 @@ class MainActivity : ComponentActivity() {
                 }
                 if (permissionGranted.value) {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                            audioDetector = AudioDetector()
+                            audioDetector = AudioDetector(textToSpeech)
                             NoiseDetectionSurface(
                                 audioDetector = audioDetector,
                                 modifier = Modifier.padding(innerPadding),
@@ -57,6 +60,12 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            textToSpeech.language = Locale.US
         }
     }
 
